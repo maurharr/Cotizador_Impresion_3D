@@ -288,9 +288,9 @@ public class MenuView extends Controlador{
         
         String texto;
         if (idioma.equalsIgnoreCase("en")) {
-            texto = "SistemaImpresoras v1.0\nCreated by Harriet M.\nContact: mh.projects.dev@gmail.com";
+            texto = "CotizadorImpresiones v1.0\nCreated by Harriet M.\nContact: mh.projects.dev@gmail.com";
         } else {
-            texto = "SistemaImpresoras v1.0\nCreado por Harriet M.\nContacto: mh.projects.dev@gmail.com";
+            texto = "CotizadorImpresiones v1.0\nCreado por Harriet M.\nContacto: mh.projects.dev@gmail.com";
         }
 
         // Label para mostrar el texto
