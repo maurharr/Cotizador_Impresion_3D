@@ -2,8 +2,10 @@ package system.view;
 
 import java.util.Arrays;
 import java.util.Optional;
+import javafx.geometry.Insets;
 import system.controller.Controlador;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -14,12 +16,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import system.model.Data;
 
 public class MenuView extends Controlador{
     private VBox root;
-    private Button btnIdioma, btnPresupuesto, btnFacturas, btnImpresoras, btnClientes, btnConfig;
+    private Button btnIdioma, btnPresupuesto, btnFacturas, btnImpresoras, btnClientes, btnConfig, btnInfo;
     private Label titulo;
     private Stage stage;
     
@@ -43,12 +46,12 @@ public class MenuView extends Controlador{
         titulo.setStyle("-fx-font-smoothing-type: gray;");
         
         Label barra1 = new Label("");
-        barra1.setPrefSize(1000,100);  
+        barra1.setPrefSize(1000,60);  
         barra1.setStyle("-fx-background-color: #FFFFFF;");
         barra1.setEffect(ds);
         
         Label barra2 = new Label("");
-        barra2.setPrefSize(1000,100);  
+        barra2.setPrefSize(1300,60);  
         barra2.setStyle("-fx-background-color: #FFFFFF;");
         barra2.setEffect(ds);    
         
@@ -68,6 +71,14 @@ public class MenuView extends Controlador{
 
         btnIdioma.setOnAction(e -> mostrarSelectorIdioma());
 
+        
+        btnInfo = new Button("i");
+        btnInfo.setPrefSize(50, 50);
+        btnInfo.setStyle(baseStyle +"-fx-background-color: #FFFFFF;" +"-fx-border-color: #a0a0a0;" +"-fx-text-fill: #333;");
+        btnInfo.setTextAlignment(TextAlignment.CENTER);         
+        
+        btnInfo.setOnAction(e -> mostrarInfo());
+        
         
         btnPresupuesto = new Button("");
         btnPresupuesto.setPrefSize(130, 160);
@@ -220,25 +231,37 @@ public class MenuView extends Controlador{
         btnClientes.setOnAction(e -> abrirVentana(new Stage(), new ClienteView(stage).getRoot(), t("menu.tablaClientes"), 1400, 600));
         btnImpresoras.setOnAction(e -> abrirVentana(new Stage(), new ImpresorasView(stage).getRoot(), t("menu.tablaImpresoras"), 1400, 600));
         btnConfig.setOnAction(e -> abrirVentana(new Stage(), new ConfigView(stage).getRoot(), t("menu.config"), 800, 650));
+   
+        VBox paso1 = new VBox(barra1, btnIdioma);
+        btnIdioma.setTranslateX(10);
+        btnIdioma.setTranslateY(-55);
+        
         
         HBox form = new HBox(20, btnPresupuesto, btnFacturas, btnClientes, btnImpresoras, btnConfig);
         form.setStyle(baseStyle + "-fx-background-color: linear-gradient(#FAFAFA, #F2F2F2);-fx-background-radius: 15;-fx-border-radius: 15;");
         form.setMaxWidth(785);
-        form.setPrefHeight(200);
+        form.setPrefHeight(160);
         form.setEffect(ds);
         form.setAlignment(Pos.CENTER);
         
+
         
-        VBox form2 = new VBox(30,btnIdioma, titulo, form);
-        form2.setMaxHeight(500);
-        form2.setAlignment(Pos.CENTER);
-        form2.setTranslateY(-50);
+        VBox paso3 = new VBox(30, titulo, form);
+        paso3.setAlignment(Pos.CENTER);
         
         
-        root.getChildren().addAll(barra1,form2, barra2);
-        btnIdioma.setTranslateX(-410);
-        btnIdioma.setTranslateY(-85);
+        VBox paso2 = new VBox(40,paso1, paso3);
+        paso2.setAlignment(Pos.CENTER);
         
+        VBox paso4 = new VBox(barra2, btnInfo);
+        barra2.setTranslateY(50);
+        btnInfo.setTranslateX(840);
+        btnInfo.setTranslateY(-5);
+        
+        VBox paso5 = new VBox(102,paso2, paso4);
+        
+        //root.getChildren().addAll(paso2);
+        root.getChildren().addAll(paso5);
         if (Data.administrador.getIdioma().equals("EN")) {
             aplicarIdiomaIngles();
         } else {
@@ -252,6 +275,42 @@ public class MenuView extends Controlador{
     public VBox getRoot() {
         return root;
     }
+
+
+    public void mostrarInfo() {
+        String idioma = Data.administrador.getIdioma();
+        Stage infoStage = new Stage();
+        if (idioma.equalsIgnoreCase("en")) {
+            infoStage.setTitle("Information"); 
+        } else {
+            infoStage.setTitle("Información"); 
+        }
+        
+        String texto;
+        if (idioma.equalsIgnoreCase("en")) {
+            texto = "SistemaImpresoras v1.0\nCreated by Harriet M.\nContact: mh.projects.dev@gmail.com";
+        } else {
+            texto = "SistemaImpresoras v1.0\nCreado por Harriet M.\nContacto: mh.projects.dev@gmail.com";
+        }
+
+        // Label para mostrar el texto
+        Label label = new Label(texto);
+        label.setStyle("-fx-font-size: 14; -fx-padding: 10;"); // estilo simple
+
+        // Layout de la ventana
+        VBox root = new VBox(label);
+        root.setAlignment(Pos.CENTER);
+
+        // Crear Scene
+        Scene scene = new Scene(root, 300, 150);
+
+        // Configurar Stage
+        infoStage.setScene(scene);
+        infoStage.initModality(Modality.APPLICATION_MODAL); // bloquea la ventana principal
+        infoStage.setResizable(false);
+        infoStage.showAndWait(); // espera hasta cerrarse
+    }
+
     
     public void mostrarSelectorIdioma() {
         ChoiceDialog<String> dialog = new ChoiceDialog<>("English", Arrays.asList("English", "Español"));
