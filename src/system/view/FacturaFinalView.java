@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javafx.geometry.Pos;
 import javafx.print.PageLayout;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -73,7 +76,7 @@ public class FacturaFinalView {
         ds.setColor(Color.color(0, 0, 0, 0.4)); // negro semi-transparente
         
         
-        btnImprimir.setStyle(baseStyle +"-fx-background-color: linear-gradient(#e0e0e0, #cfcfcf);" +"-fx-border-color: #a0a0a0;" +"-fx-text-fill: #333;");
+        btnImprimir.setStyle(baseStyle +"-fx-background-color: linear-gradient(#4a77b8, #2f5f9e);" +"-fx-border-color: #244a7c;" +"-fx-text-fill: white;");
         btnImprimir.setEffect(ds);     
         
         btnCerrar.setStyle(baseStyle +"-fx-background-color: linear-gradient(#e0e0e0, #cfcfcf);" +"-fx-border-color: #a0a0a0;" +"-fx-text-fill: #333;");
@@ -469,17 +472,17 @@ public class FacturaFinalView {
         
         btnImprimir.setOnMouseEntered(e ->
             btnImprimir.setStyle(baseStyle +
-                "-fx-background-color: linear-gradient(#f0f0f0, #dcdcdc);" +
-                "-fx-border-color: #909090;" +
-                "-fx-text-fill: #222;"
+                "-fx-background-color: linear-gradient(#5a8bd8, #3f6fb0);" +
+                "-fx-border-color: #244a7c;" +
+                "-fx-text-fill: white;"
         ));
 
         btnImprimir.setOnMouseExited(e ->
             btnImprimir.setStyle(baseStyle +
-                "-fx-background-color: linear-gradient(#e0e0e0, #cfcfcf);" +
-                "-fx-border-color: #a0a0a0;" +
-                "-fx-text-fill: #333;"
-        ));   
+                "-fx-background-color: linear-gradient(#4a77b8, #2f5f9e);" +
+                "-fx-border-color: #244a7c;" +
+                "-fx-text-fill: white;"
+        ));      
         
         
         btnCerrar.setOnMouseEntered(e ->
@@ -523,15 +526,22 @@ public class FacturaFinalView {
     public VBox getRoot() {
         return root;
     }
-    
-    public void imprimir(Node nodo) {
+
+    public static void imprimir(Node nodo) {
 
         PrinterJob job = PrinterJob.createPrinterJob();
 
         if (job != null && job.showPrintDialog(nodo.getScene().getWindow())) {
 
-            // 🔥 Usar configuración REAL elegida por el usuario
-            PageLayout layout = job.getJobSettings().getPageLayout();
+            Printer printer = job.getPrinter();
+
+            PageLayout layout = printer.createPageLayout(
+                    Paper.A4,
+                    PageOrientation.PORTRAIT,
+                    Printer.MarginType.HARDWARE_MINIMUM
+            );
+
+            job.getJobSettings().setPageLayout(layout);
 
             // 🔧 Forzar layout correcto
             nodo.applyCss();
@@ -539,8 +549,8 @@ public class FacturaFinalView {
                 ((Parent) nodo).layout();
             }
 
-            // 🔥 Calidad
-            double scaleFactor = 3.0; // 2.0 recomendado
+            // 🔥 FACTOR DE CALIDAD (clave)
+            double scaleFactor = 3.0; // probá 2.0 o 3.0
 
             SnapshotParameters params = new SnapshotParameters();
             params.setTransform(new Scale(scaleFactor, scaleFactor));
@@ -555,15 +565,15 @@ public class FacturaFinalView {
             double imageWidth = snapshot.getWidth();
             double imageHeight = snapshot.getHeight();
 
-            // 📏 Escalado dinámico (cualquier hoja)
+            // Escalado final para A4
             double scale = Math.min(
-                printableWidth / imageWidth,
-                printableHeight / imageHeight
-            ) * 0.95; // % de uso
+                    printableWidth / imageWidth,
+                    printableHeight / imageHeight
+            );
 
             imageView.getTransforms().add(new Scale(scale, scale));
 
-            // 🎯 Centrado automático
+            // Centrado
             imageView.setTranslateX((printableWidth - imageWidth * scale) / 2);
             imageView.setTranslateY((printableHeight - imageHeight * scale) / 2);
 
@@ -688,7 +698,7 @@ public class FacturaFinalView {
                         return "Nuevo producto";
                     }
                     case "factura.btn.imprimir" -> {
-                        return "Imprimir";
+                        return "Imprimir y Guardar";
                     }
                 }
             }
@@ -704,7 +714,7 @@ public class FacturaFinalView {
                         return "Close";
                     }
                     case "factura.btn.imprimir" -> {
-                        return "Print";
+                        return "Print and Save";
                     }
                     case "factura.btn.cancelar" -> {
                         return "Cancel";
