@@ -1115,11 +1115,9 @@ public class PresupuestoView extends Controlador {
             rptaCostoOperador.setText(formatMoney(costoOperador));
 
             // ================= PRECIOS =================
-            double costoUnitario = (costoOperativoMaquina + costoMaterial) / ((cantidad/piezasPorTanda)*piezasPorTanda);
-            promptPrecioCosto.setText(formatMoney(costoUnitario));
-
             double valorModelado = Double.parseDouble(promptValorModelado.getText());
-
+            double costoUnitario = (costoOperativoMaquina + costoMaterial + valorModelado) / ((cantidad/piezasPorTanda)*piezasPorTanda);
+            promptPrecioCosto.setText(formatMoney(costoUnitario));
             double precioMinimo = (costoMaterial + costoOperativoMaquina + gananciaMaquina + costoOperador + valorModelado) / ((cantidad/piezasPorTanda)*piezasPorTanda); //valorModelado AGREGADO, preguntar
 
             promptPrecioMinimo.setText(formatMoney(precioMinimo));
